@@ -53,7 +53,7 @@ function addScore(number) {
         }
     }
 
-    if (!(playerMarks > 3 && opponentMarks >= 3)) {
+    if (playerMarks <= 3 || (playerMarks > 3 && opponentMarks < 3)) {
         if (currentPlayer === 1) {
             player1Marks++;
         } else {

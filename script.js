@@ -61,27 +61,19 @@ function addScore(number) {
     if (playerMarks < 3 || (playerMarks === 3 && opponentMarks < 3)) {
         if (currentPlayer === 1) {
             player1Marks++;
+            document.getElementById('player1-marks').textContent = `Marks: ${player1Marks}`;
         } else {
             player2Marks++;
+            document.getElementById('player2-marks').textContent = `Marks: ${player2Marks}`;
         }
     }
-
-    updateMarks();
-}
-
-function updateMarks() {
-    document.getElementById('player1-marks').textContent = player1Marks;
-    document.getElementById('player2-marks').textContent = player2Marks;
 }
 
 function nextPlayer() {
     currentPlayer = currentPlayer === 1 ? 2 : 1;
     document.getElementById('currentPlayer').textContent = `Player ${currentPlayer}'s turn`;
-    // alert(`Player ${currentPlayer}'s turn`); // Optional: Use this if you want a visual alert
 }
 
 function clickUndo() {
     // Implement undo functionality if needed
 }
-
-updateMarks();

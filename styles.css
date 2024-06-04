@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -19,8 +21,18 @@ body {
 button {
     display: inline-block;
     margin: 5px;
-    padding: 10px;
-    font-size: 16px;
+    padding: 20px;
+    font-size: 20px;
+    font-family: 'Permanent Marker', cursive;
+    color: white;
+    background-color: lightblue;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: deepskyblue;
 }
 
 .marks {
@@ -35,4 +47,16 @@ button {
     align-items: center;
     margin: 10px;
     font-size: 20px;
+    font-family: 'Permanent Marker', cursive;
 }
+
+.mark span {
+    display: inline-block;
+    width: 50px;
+    text-align: center;
+}
+
+.mark button {
+    margin: 0 10px;
+}
+

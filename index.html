@@ -8,31 +8,27 @@
 </head>
 <body>
     <h1>Dart Scoring</h1>
+    <div id="currentPlayer">Player 1's turn</div>
     <div class="scoreboard">
-        <div class="player" id="player1">
+        <div class="player">
             <h2>Player 1</h2>
             <p>Score: <span id="player1-score">0</span></p>
             <p>Marks: <span id="player1-marks">0</span></p>
-            <button onclick="addScore(1, '20')">20</button>
-            <button onclick="addScore(1, '19')">19</button>
-            <button onclick="addScore(1, '18')">18</button>
-            <button onclick="addScore(1, '17')">17</button>
-            <button onclick="addScore(1, '16')">16</button>
-            <button onclick="addScore(1, '15')">15</button>
-            <button onclick="addScore(1, 'Bull')">Bull</button>
         </div>
-        <div class="player" id="player2">
+        <div class="player">
             <h2>Player 2</h2>
             <p>Score: <span id="player2-score">0</span></p>
             <p>Marks: <span id="player2-marks">0</span></p>
-            <button onclick="addScore(2, '20')">20</button>
-            <button onclick="addScore(2, '19')">19</button>
-            <button onclick="addScore(2, '18')">18</button>
-            <button onclick="addScore(2, '17')">17</button>
-            <button onclick="addScore(2, '16')">16</button>
-            <button onclick="addScore(2, '15')">15</button>
-            <button onclick="addScore(2, 'Bull')">Bull</button>
         </div>
+    </div>
+    <div class="marks">
+        <div class="mark" data-number="20">20: <span id="20-marks"> </span></div>
+        <div class="mark" data-number="19">19: <span id="19-marks"> </span></div>
+        <div class="mark" data-number="18">18: <span id="18-marks"> </span></div>
+        <div class="mark" data-number="17">17: <span id="17-marks"> </span></div>
+        <div class="mark" data-number="16">16: <span id="16-marks"> </span></div>
+        <div class="mark" data-number="15">15: <span id="15-marks"> </span></div>
+        <div class="mark" data-number="Bull">Bull: <span id="Bull-marks"> </span></div>
     </div>
     <button onclick="nextPlayer()">Next Player</button>
     <script src="script.js"></script>

@@ -81,4 +81,3 @@ function nextPlayer() {
 }
 
 updateMarks();
-

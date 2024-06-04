@@ -33,6 +33,11 @@ function addScore(number) {
     let playerMarks = marks[number][currentPlayer - 1];
     let opponentMarks = marks[number][currentPlayer === 1 ? 1 : 0];
 
+    if (playerMarks >= 3 && opponentMarks >= 3) {
+        // Both players have closed this number, do not increment marks
+        return;
+    }
+
     if (playerMarks < 3) {
         playerMarks++;
         if (playerMarks === 1) {

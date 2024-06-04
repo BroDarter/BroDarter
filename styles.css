@@ -13,18 +13,11 @@ h1 {
     margin-top: 10px;
 }
 
-.container {
+.scoreboard {
     display: flex;
     justify-content: center;
     align-items: flex-start;
     margin-top: 10px;
-}
-
-.vertical-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 20px;
 }
 
 .player {
@@ -32,28 +25,27 @@ h1 {
     border: 2px solid #0000ff;
     border-radius: 8px;
     width: 150px;
-    height: 100px;
     background-color: #f5f5f5;
-    margin-bottom: 10px;
+    margin: 0 20px;
 }
 
 #currentPlayer {
     font-size: 20px;
-    margin: 5px;
+    margin: 10px;
 }
 
 .marks {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 5px;
+    margin: 10px;
 }
 
 .mark {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 3px;
+    margin: 5px;
     font-size: 24px;
     width: 250px;
 }
@@ -66,7 +58,7 @@ h1 {
 
 button {
     display: inline-block;
-    margin: 3px;
+    margin: 5px;
     padding: 15px;
     font-size: 24px;
     font-family: 'Permanent Marker', cursive;
@@ -88,6 +80,4 @@ footer {
     justify-content: space-between;
     padding: 10px;
     font-size: 24px;
-    width: 80%;
-    margin: 0 auto;
 }

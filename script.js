@@ -61,12 +61,17 @@ function addScore(number) {
     if (playerMarks < 3 || (playerMarks === 3 && opponentMarks < 3)) {
         if (currentPlayer === 1) {
             player1Marks++;
-            document.getElementById('player1-marks').textContent = `Marks: ${player1Marks}`;
         } else {
             player2Marks++;
-            document.getElementById('player2-marks').textContent = `Marks: ${player2Marks}`;
         }
     }
+
+    updateMarks();
+}
+
+function updateMarks() {
+    document.getElementById('player1-marks').textContent = player1Marks;
+    document.getElementById('player2-marks').textContent = player2Marks;
 }
 
 function nextPlayer() {

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dart Scoring</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Dart Scoring</h1>
+    <div class="scoreboard">
+        <div class="player" id="player1">
+            <h2>Player 1</h2>
+            <p>Score: <span id="player1-score">0</span></p>
+            <p>Marks: <span id="player1-marks">0</span></p>
+            <button onclick="addScore(1, '20')">20</button>
+            <button onclick="addScore(1, '19')">19</button>
+            <button onclick="addScore(1, '18')">18</button>
+            <button onclick="addScore(1, '17')">17</button>
+            <button onclick="addScore(1, '16')">16</button>
+            <button onclick="addScore(1, '15')">15</button>
+            <button onclick="addScore(1, 'Bull')">Bull</button>
+        </div>
+        <div class="player" id="player2">
+            <h2>Player 2</h2>
+            <p>Score: <span id="player2-score">0</span></p>
+            <p>Marks: <span id="player2-marks">0</span></p>
+            <button onclick="addScore(2, '20')">20</button>
+            <button onclick="addScore(2, '19')">19</button>
+            <button onclick="addScore(2, '18')">18</button>
+            <button onclick="addScore(2, '17')">17</button>
+            <button onclick="addScore(2, '16')">16</button>
+            <button onclick="addScore(2, '15')">15</button>
+            <button onclick="addScore(2, 'Bull')">Bull</button>
+        </div>
+    </div>
+    <button onclick="nextPlayer()">Next Player</button>
+    <script src="script.js"></script>
+</body>
+</html>

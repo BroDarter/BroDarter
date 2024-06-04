@@ -10,43 +10,44 @@ body {
 
 h1 {
     font-size: 48px;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .scoreboard {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    margin: 20px;
+    margin: 10px;
+    padding: 10px;
 }
 
 .player {
     margin: 0 20px;
-    padding: 20px;
+    padding: 10px;
     border: 2px solid #0000ff;
     border-radius: 8px;
     width: 200px;
-    height: 150px;
+    height: 100px;
     background-color: #f5f5f5;
 }
 
 #currentPlayer {
     font-size: 24px;
-    margin: 20px;
+    margin: 10px;
 }
 
 .marks {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 20px;
+    margin: 10px;
 }
 
 .mark {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 10px;
+    margin: 5px;
     font-size: 24px;
     width: 300px;
 }
@@ -60,7 +61,7 @@ h1 {
 button {
     display: inline-block;
     margin: 5px;
-    padding: 20px;
+    padding: 15px;
     font-size: 24px;
     font-family: 'Permanent Marker', cursive;
     color: white;
@@ -79,10 +80,11 @@ button:hover {
 footer {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
+    padding: 10px;
     font-size: 24px;
 }
 
 footer div {
     width: 200px;
 }
+

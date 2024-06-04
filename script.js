@@ -80,4 +80,8 @@ function nextPlayer() {
     alert(`Player ${currentPlayer}'s turn`);
 }
 
+function clickUndo() {
+    // Implement undo functionality if needed
+}
+
 updateMarks();

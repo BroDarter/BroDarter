@@ -77,7 +77,7 @@ function updateMarks() {
 function nextPlayer() {
     currentPlayer = currentPlayer === 1 ? 2 : 1;
     document.getElementById('currentPlayer').textContent = `Player ${currentPlayer}'s turn`;
-    alert(`Player ${currentPlayer}'s turn`);
+    // alert(`Player ${currentPlayer}'s turn`); // Optional: Use this if you want a visual alert
 }
 
 function clickUndo() {

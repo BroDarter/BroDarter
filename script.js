@@ -24,33 +24,27 @@ const marks = {
     'Bull': [0, 0]
 };
 
-document.querySelectorAll('.mark').forEach(mark => {
-    mark.addEventListener('click', () => {
-        const number = mark.getAttribute('data-number');
-        addScore(currentPlayer, number);
-    });
-});
-
-function addScore(player, number) {
+function addScore(number) {
     const points = scores[number];
-    const scoreElement = document.getElementById(`player${player}-score`);
-    const marksElement = document.getElementById(`${number}-marks`);
+    const scoreElement = document.getElementById(`player${currentPlayer}-score`);
+    const playerMarksElement = document.getElementById(`player${currentPlayer}-${number}-marks`);
+    const opponentMarksElement = document.getElementById(`player${currentPlayer === 1 ? 2 : 1}-${number}-marks`);
 
-    let playerMarks = marks[number][player - 1];
-    let opponentMarks = marks[number][player === 1 ? 1 : 0];
+    let playerMarks = marks[number][currentPlayer - 1];
+    let opponentMarks = marks[number][currentPlayer === 1 ? 1 : 0];
 
     if (playerMarks < 3) {
         playerMarks++;
         if (playerMarks === 1) {
-            marksElement.textContent = "\\";
+            playerMarksElement.textContent = "\\";
         } else if (playerMarks === 2) {
-            marksElement.textContent = "X";
+            playerMarksElement.textContent = "X";
         } else if (playerMarks === 3) {
-            marksElement.textContent = "[X]";
+            playerMarksElement.textContent = "[X]";
         }
-        marks[number][player - 1] = playerMarks;
+        marks[number][currentPlayer - 1] = playerMarks;
     } else if (playerMarks >= 3 && opponentMarks < 3) {
-        if (player === 1) {
+        if (currentPlayer === 1) {
             player1Score += points;
             scoreElement.textContent = player1Score;
         } else {
@@ -59,10 +53,12 @@ function addScore(player, number) {
         }
     }
 
-    if (player === 1) {
-        player1Marks++;
-    } else {
-        player2Marks++;
+    if (!(playerMarks > 3 && opponentMarks >= 3)) {
+        if (currentPlayer === 1) {
+            player1Marks++;
+        } else {
+            player2Marks++;
+        }
     }
 
     updateMarks();

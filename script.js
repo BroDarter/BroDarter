@@ -3,6 +3,8 @@ let player1Score = 0;
 let player2Score = 0;
 let player1Marks = 0;
 let player2Marks = 0;
+let latestState = {}; // To store the latest state
+let turnActions = []; // To store the actions taken during the current turn
 
 const scores = {
     '20': 20,
@@ -24,7 +26,31 @@ const marks = {
     'Bull': [0, 0]
 };
 
+function saveLatestState() {
+    latestState = {
+        currentPlayer,
+        player1Score,
+        player2Score,
+        player1Marks,
+        player2Marks,
+        marks: JSON.parse(JSON.stringify(marks)) // Deep copy of marks
+    };
+}
+
+function restoreLatestState() {
+    if (Object.keys(latestState).length > 0) { // Ensure there's a saved state
+        player1Score = latestState.player1Score;
+        player2Score = latestState.player2Score;
+        player1Marks = latestState.player1Marks;
+        player2Marks = latestState.player2Marks;
+        Object.assign(marks, latestState.marks);
+
+        updateDisplay();
+    }
+}
+
 function addScore(number) {
+    saveTurnAction(); // Save state before making changes
     const points = scores[number];
     const scoreElement = document.getElementById(`player${currentPlayer}-score`);
     const playerMarksElement = document.getElementById(`player${currentPlayer}-${number}-marks`);
@@ -75,10 +101,105 @@ function updateMarks() {
 }
 
 function nextPlayer() {
+    if (checkWinCondition()) {
+        alert(`Player ${currentPlayer} won!`);
+        resetGame();
+        return;
+    }
+    saveLatestState(); // Save state at the beginning of the next player's turn
     currentPlayer = currentPlayer === 1 ? 2 : 1;
+    turnActions = []; // Clear actions for the new turn
     document.getElementById('currentPlayer').textContent = `Player ${currentPlayer}'s turn`;
 }
 
-function clickUndo() {
-    // Implement undo functionality if needed
+function checkWinCondition() {
+    const playerClosedAll = (playerMarks) => Object.values(marks).every(([p1Marks, p2Marks], index) => {
+        return currentPlayer === 1 ? p1Marks >= 3 : p2Marks >= 3;
+    });
+
+    if (playerClosedAll(marks[currentPlayer - 1])) {
+        if (currentPlayer === 1 && player1Score >= player2Score) {
+            return true;
+        } else if (currentPlayer === 2 && player2Score >= player1Score) {
+            return true;
+        }
+    }
+    return false;
 }
+
+function resetGame() {
+    currentPlayer = 1;
+    player1Score = 0;
+    player2Score = 0;
+    player1Marks = 0;
+    player2Marks = 0;
+    latestState = {};
+    turnActions = [];
+
+    for (const number in marks) {
+        marks[number][0] = 0;
+        marks[number][1] = 0;
+    }
+
+    updateDisplay();
+    saveLatestState();
+}
+
+function clickUndo() {
+    if (turnActions.length > 0) {
+        const lastAction = turnActions.pop(); // Remove the last action
+        restoreTurnAction(lastAction); // Restore the game state to the previous action
+    } else {
+        restoreLatestState(); // Restore to the state before the turn started
+    }
+    // Ensure display is updated correctly without changing the player
+    document.getElementById('currentPlayer').textContent = `Player ${currentPlayer}'s turn`;
+}
+
+function saveTurnAction() {
+    const state = {
+        player1Score,
+        player2Score,
+        player1Marks,
+        player2Marks,
+        marks: JSON.parse(JSON.stringify(marks)) // Deep copy of marks
+    };
+    turnActions.push(state);
+}
+
+function restoreTurnAction(state) {
+    player1Score = state.player1Score;
+    player2Score = state.player2Score;
+    player1Marks = state.player1Marks;
+    player2Marks = state.player2Marks;
+    Object.assign(marks, state.marks);
+
+    updateDisplay();
+}
+
+function updateDisplay() {
+    document.getElementById('player1-score').textContent = player1Score;
+    document.getElementById('player2-score').textContent = player2Score;
+    document.getElementById('currentPlayer').textContent = `Player ${currentPlayer}'s turn`;
+
+    for (const number in marks) {
+        const player1MarksElement = document.getElementById(`player1-${number}-marks`);
+        const player2MarksElement = document.getElementById(`player2-${number}-marks`);
+        const player1MarkCount = marks[number][0];
+        const player2MarkCount = marks[number][1];
+
+        player1MarksElement.textContent = getMarkSymbol(player1MarkCount);
+        player2MarksElement.textContent = getMarkSymbol(player2MarkCount);
+    }
+}
+
+function getMarkSymbol(count) {
+    if (count === 0) return "";
+    if (count === 1) return "\\";
+    if (count === 2) return "X";
+    if (count === 3) return "[X]";
+}
+
+// Initialize the game state
+saveLatestState();
+updateDisplay();

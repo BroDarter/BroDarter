@@ -13,6 +13,10 @@ h1 {
     margin-top: 10px;
 }
 
+h2 {
+    margin-top: 3px;
+}
+
 .container {
     display: flex;
     justify-content: center;
@@ -20,24 +24,35 @@ h1 {
     margin-top: 10px;
 }
 
-.vertical-column {
+.vertical-column1 {
+    position: absolute;
+    top: calc(50px + 15px); /* Adjust this value to match the height of your header */
+    left: 28%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 10px;
 }
 
+.vertical-column2 {
+    position: absolute;
+    top: calc(50px + 15px); /* Adjust this value to match the height of your header */
+    right: 27.5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}   
+
+
 .player {
-    border: 2px solid #0000ff;
+    border: 3px solid #007bff;
     border-radius: 8px;
     width: 150px;
-    background-color: #f5f5f5;
+    height: 100px;
     margin-bottom: 10px;
 }
 
 .player-score {
     font-size: 24px;
-    margin-top: 10px;
 }
 
 #currentPlayer {
@@ -50,16 +65,16 @@ h1 {
     flex-direction: column;
     align-items: center;
     margin: 10px;
-    margin-top: 100px; /* Add this line to shift the marks div down */
+    margin-top: 45px; /* Add this line to shift the marks div down */
+    width:50%;
 }
 
 .mark {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin: 3px;
-    font-size: 24px;
-    width: 250px;
+    justify-content: space-between; /* Change from center to space-between */
+    font-size: 36px;
+    width: 75%;
 }
 
 .mark span {
@@ -70,8 +85,7 @@ h1 {
 
 button {
     display: inline-block;
-    margin: 5px;
-    padding: 20px;
+    margin: 3px;
     font-size: 24px;
     font-family: 'Permanent Marker', cursive;
     color: white;
@@ -79,8 +93,10 @@ button {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 70px;
+    text-align: center;
+    vertical-align: middle; 
 }
 
 button:hover {
@@ -90,7 +106,11 @@ button:hover {
 footer {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
     font-size: 24px;
-    width: 100%;
+    width: 41%;
+    margin: 0 auto; 
+}
+
+span#player1-20-marks{
+    left: 27%;
 }

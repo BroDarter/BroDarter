@@ -5,6 +5,7 @@ let player1Marks = 0;
 let player2Marks = 0;
 let latestState = {}; // To store the latest state
 let turnActions = []; // To store the actions taken during the current turn
+let turnMarkCount = 0; // Count of marks in the current turn
 
 const scores = {
     '20': 20,
@@ -46,11 +47,19 @@ function restoreLatestState() {
         Object.assign(marks, latestState.marks);
 
         updateDisplay();
+        turnMarkCount = 0; // Reset the turn mark count
     }
 }
 
 function addScore(number) {
+    if (turnMarkCount >= 9) {
+        alert('Only 9 marks possible per round, please try again.');
+        clickUndo(); // Treat "Ok" as "Undo"
+        return;
+    }
+    
     saveTurnAction(); // Save state before making changes
+    turnMarkCount++; // Increment the count of marks in the current turn
     const points = scores[number];
     const scoreElement = document.getElementById(`player${currentPlayer}-score`);
     const playerMarksElement = document.getElementById(`player${currentPlayer}-${number}-marks`);
@@ -101,6 +110,12 @@ function updateMarks() {
 }
 
 function nextPlayer() {
+    if (turnMarkCount > 9) {
+        alert('Only 9 marks possible per round, please try again.');
+        clickUndo(); // Treat "Ok" as "Undo"
+        return;
+    }
+
     if (checkWinCondition()) {
         alert(`Player ${currentPlayer} won!`);
         resetGame();
@@ -108,6 +123,7 @@ function nextPlayer() {
     }
     saveLatestState(); // Save state at the beginning of the next player's turn
     currentPlayer = currentPlayer === 1 ? 2 : 1;
+    turnMarkCount = 0; // Reset the turn mark count
     turnActions = []; // Clear actions for the new turn
     document.getElementById('currentPlayer').textContent = `Player ${currentPlayer}'s turn`;
 }
@@ -135,6 +151,7 @@ function resetGame() {
     player2Marks = 0;
     latestState = {};
     turnActions = [];
+    turnMarkCount = 0; // Reset the turn mark count
 
     for (const number in marks) {
         marks[number][0] = 0;
@@ -149,6 +166,7 @@ function clickUndo() {
     if (turnActions.length > 0) {
         const lastAction = turnActions.pop(); // Remove the last action
         restoreTurnAction(lastAction); // Restore the game state to the previous action
+        turnMarkCount--; // Decrement the turn mark count
     } else {
         restoreLatestState(); // Restore to the state before the turn started
     }

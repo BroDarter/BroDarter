@@ -125,3 +125,32 @@ footer {
     width: 41%;
     margin: 0 auto; 
 }
+
+
+.popup-gif {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.popup-gif img {
+    width: 300px; /* Adjust the size as needed */
+    height: auto;
+}
+
+.popup-gif2 {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.popup-gif2 img {
+    width: 900px; /* Adjust the size as needed */
+    height: auto;
+}

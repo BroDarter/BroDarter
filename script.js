@@ -14,7 +14,7 @@ let totalMarks = { 1: [], 2: [] }; // To track total marks per turn for each pla
 // Set the player names in the HTML
 document.addEventListener('DOMContentLoaded', (event) => {
     const popupWidth = 400;
-    const popupHeight = 300;
+    const popupHeight = 275;
     const left = (window.innerWidth / 2) - (popupWidth / 2);
     const top = (window.innerHeight / 2) - (popupHeight / 2);
 
@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     namePopup.document.write(`
         <div style="text-align:center; font-family: 'Permanent Marker', cursive;">
             <h2>Enter Player Names</h2>
-            <input type="text" id="player1" placeholder="Player 1" style="margin:10px; padding:10px; font-size:18px;">
+            <input type="text" id="player1" placeholder="Player 1" style="margin:10px; padding:10px; font-size:18px;font-family: 'Permanent Marker', cursive;">
             <br>
-            <input type="text" id="player2" placeholder="Player 2" style="margin:10px; padding:10px; font-size:18px;">
+            <input type="text" id="player2" placeholder="Player 2" style="margin:10px; padding:10px; font-size:18px;font-family: 'Permanent Marker', cursive;">
             <br>
-            <button onclick="opener.setPlayerNames(document.getElementById('player1').value, document.getElementById('player2').value); window.close();" style="margin:10px; padding:10px; font-size:18px; background-color:#007bff; color:white; border:none; border-radius:8px;">Submit</button>
+            <button onclick="opener.setPlayerNames(document.getElementById('player1').value, document.getElementById('player2').value); window.close();" style="margin:10px; padding:10px; font-size:18px; background-color:#007bff; color:white; border:none; border-radius:8px;font-family: 'Permanent Marker', cursive;">Submit</button>
         </div>
     `);
 });
@@ -65,18 +65,37 @@ const marks = {
 
 function askWhoGoesFirst() {
     const popupWidth = 400;
-    const popupHeight = 200;
+    const popupHeight = 165;
     const left = (window.innerWidth / 2) - (popupWidth / 2);
     const top = ((window.innerHeight / 2) - (popupHeight / 2))-50;
 
     let popup = window.open("", "Which player goes first?", `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`);
     popup.document.write(`
-        <div style="text-align:center;">
+        <div style="text-align:center; font-family: 'Permanent Marker', cursive;">
             <h2>Who should go first?</h2>
             <button onclick="opener.setFirstPlayer(1);window.close();" style="margin:10px; padding:15px; font-size:25px;font-family: 'Permanent Marker'; background-color:#007bff; color:white; border:none; border-radius:8px;">${player1Name}</button>
             <button onclick="opener.setFirstPlayer(2);window.close();" style="margin:10px; padding:15px; font-size:25px; font-family: 'Permanent Marker'; background-color:#007bff; color:white; border:none; border-radius:8px;">${player2Name}</button>
         </div>
     `);
+}
+
+function askHowManyDarts() {
+    const popupWidth = 400;
+    const popupHeight = 225;
+    const left = (window.innerWidth / 2) - (popupWidth / 2);
+    const top = ((window.innerHeight / 2) - (popupHeight / 2))-50;
+
+    let dartsPopup = window.open("", "Darts Thrown", `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`);
+    dartsPopup.document.write(`
+        <div style="text-align:center; font-family: 'Permanent Marker', cursive;">
+            <h2>Player ${currentPlayer} won!</h2>
+            <p>How many darts in the final round?</p>
+            <button onclick="opener.calculateStats(1);window.close();" style="margin:10px; font-family: 'Permanent Marker', cursive; padding:15px; font-size:25px; width: 50px; background-color:#007bff; color:white; border:none; border-radius:8px;">1</button>
+            <button onclick="opener.calculateStats(2);window.close();" style="margin:10px; font-family: 'Permanent Marker', cursive; padding:15px; font-size:25px; width: 50px; background-color:#007bff; color:white; border:none; border-radius:8px;">2</button>
+            <button onclick="opener.calculateStats(3);window.close();" style="margin:10px; font-family: 'Permanent Marker', cursive; padding:15px; font-size:25px; width: 50px; background-color:#007bff; color:white; border:none; border-radius:8px;">3</button>
+        </div>
+    `);
+    
 }
 
 function setFirstPlayer(player) {
@@ -190,13 +209,19 @@ function nextPlayer() {
     totalMarks[currentPlayer].push(turnMarkCount); // Save the marks for this turn
 
     if (checkWinCondition()) {
-        let dartsThrown = prompt(`Player ${currentPlayer} won! How many darts did you throw in the final round? (1, 2, or 3)`);
-        while (![1, 2, 3].includes(parseInt(dartsThrown))) {
-            dartsThrown = prompt(`Please enter a valid number of darts (1, 2, or 3). How many darts did you throw in the final round?`);
-        }
+        askHowManyDarts();
         calculateStats(dartsThrown);
         return;
     }
+     // Check if the player scored 7 or 8 marks in this turn
+     if (turnMarkCount === 7 || turnMarkCount === 8) {
+        showPopupGif();
+    }
+
+    if (turnMarkCount === 9 ) {
+        showPopupGif2();
+    }
+
     saveLatestState(); // Save state at the beginning of the next player's turn
     currentPlayer = currentPlayer === 1 ? 2 : 1;
     turnMarkCount = 0; // Reset the turn mark count
@@ -204,6 +229,7 @@ function nextPlayer() {
     document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
 
     updateMPR(); 
+
 }
 
 
@@ -426,4 +452,22 @@ function calculateComeback(playerMarks, opponentMarks) {
     }
 
     return maxDeficit;
+}
+
+function showPopupGif() {
+    const popup = document.getElementById('popup-gif');
+    popup.style.display = 'block';
+
+    setTimeout(() => {
+        popup.style.display = 'none';
+    }, 1000); // Display the gif for 1 second
+}
+
+function showPopupGif2() {
+    const popup = document.getElementById('popup-gif2');
+    popup.style.display = 'block';
+
+    setTimeout(() => {
+        popup.style.display = 'none';
+    }, 5000); // Display the gif for 5 second
 }

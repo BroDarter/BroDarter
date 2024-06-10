@@ -10,11 +10,12 @@ body {
 
 h1 {
     font-size: 32px;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 h2 {
-    margin-top: 3px;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .container {
@@ -33,26 +34,40 @@ h2 {
     align-items: center;
 }
 
+.mpr-player1::after {
+    font-family: 'Permanent Marker', cursive;
+    content: " MPR";
+}
+
+.mpr-player2::after {
+    font-family: 'Permanent Marker', cursive;
+    content: " MPR";
+}
+
 .vertical-column2 {
     position: absolute;
-    top: calc(50px + 15px); /* Adjust this value to match the height of your header */
+    top: calc(50px + 5px); /* Adjust this value to match the height of your header */
     right: 27.5%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }   
 
-
 .player {
     border: 3px solid #007bff;
     border-radius: 8px;
     width: 150px;
-    height: 100px;
     margin-bottom: 10px;
 }
 
 .player-score {
     font-size: 24px;
+}
+
+.player-mpr {
+    font-size: 20px;
+    color: #007bff;
+    margin-top: 5px;
 }
 
 #currentPlayer {
@@ -66,7 +81,7 @@ h2 {
     align-items: center;
     margin: 10px;
     margin-top: 45px; /* Add this line to shift the marks div down */
-    width:50%;
+    width: 50%;
 }
 
 .mark {
@@ -109,8 +124,4 @@ footer {
     font-size: 24px;
     width: 41%;
     margin: 0 auto; 
-}
-
-span#player1-20-marks{
-    left: 27%;
 }

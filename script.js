@@ -8,8 +8,17 @@ let turnActions = []; // To store the actions taken during the current turn
 let turnMarkCount = 0; // Count of marks in the current turn
 let totalMarks = { 1: [], 2: [] }; // To track total marks per turn for each player
 
-//let player1Name = prompt("Enter name for Player 1:", "Player 1");
-//let player2Name = prompt("Enter name for Player 2:", "Player 2");
+const socket = io('https://your-vercel-app-url');
+
+socket.on('updateGameState', (state) => {
+    // Update the game state with the data received from the server
+    Object.assign(gameState, state);
+    updateDisplay();
+});
+
+function sendScoreUpdate(data) {
+    socket.emit('updateScore', data);
+}
 
 // Set the player names in the HTML
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -178,6 +187,7 @@ function addScore(number) {
     }
 
     updateMarks();
+    sendScoreUpdate(gameState);
 }
 
 function updateMarks() {
@@ -229,6 +239,7 @@ function nextPlayer() {
     document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
 
     updateMPR(); 
+    sendScoreUpdate(gameState);
 
 }
 
@@ -469,5 +480,6 @@ function showPopupGif2() {
 
     setTimeout(() => {
         popup.style.display = 'none';
-    }, 5000); // Display the gif for 5 second
+    }, 5900); // Display the gif for 5 second
 }
+

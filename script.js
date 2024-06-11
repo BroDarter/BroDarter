@@ -8,7 +8,7 @@ let turnActions = []; // To store the actions taken during the current turn
 let turnMarkCount = 0; // Count of marks in the current turn
 let totalMarks = { 1: [], 2: [] }; // To track total marks per turn for each player
 
-const socket = io('https://your-vercel-app-url');
+const socket = io('https://https://bro-darter.vercel.app/');
 
 socket.on('updateGameState', (state) => {
     // Update the game state with the data received from the server

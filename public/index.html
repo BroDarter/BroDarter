@@ -2,21 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Socket.io Test</title>
-    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bro Darter</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Socket.io Test</h1>
+    <h1>Bro Darter</h1>
+    <div class="container">
+        <div class="vertical-column1">
+            <div class="player">
+                <h2 id="player1-name"> Player 1 </h2>
+                <div class="player-score"><span id="player1-score">0</span></div>
+                <div class="mpr-player1" id="mpr-player1">0.00</div>
+            </div>
+        </div>
+        <div class="marks">
+            <div id="currentPlayer">Player 1's turn</div>
+            <div class="mark">
+                <span id="player1-20-marks"></span>
+                <button onclick="addScore('20')">20</button>
+                <span id="player2-20-marks"></span>
+            </div>
+            <div class="mark">
+                <span id="player1-19-marks"></span>
+                <button onclick="addScore('19')">19</button>
+                <span id="player2-19-marks"></span>
+            </div>
+            <div class="mark">
+                <span id="player1-18-marks"></span>
+                <button onclick="addScore('18')">18</button>
+                <span id="player2-18-marks"></span>
+            </div>
+            <div class="mark">
+                <span id="player1-17-marks"></span>
+                <button onclick="addScore('17')">17</button>
+                <span id="player2-17-marks"></span>
+            </div>
+            <div class="mark">
+                <span id="player1-16-marks"></span>
+                <button onclick="addScore('16')">16</button>
+                <span id="player2-16-marks"></span>
+            </div>
+            <div class="mark">
+                <span id="player1-15-marks"></span>
+                <button onclick="addScore('15')">15</button>
+                <span id="player2-15-marks"></span>
+            </div>
+            <div class="mark">
+                <span id="player1-Bull-marks"></span>
+                <button onclick="addScore('Bull')">Bull</button>
+                <span id="player2-Bull-marks"></span>
+            </div>
+        </div>
+        <div class="vertical-column2">
+            <div class="player">
+                <h2 id="player2-name"> Player 2</h2>
+                <div class="player-score"><span id="player2-score">0</span></div>
+                <div class="mpr-player2" id="mpr-player2">0.00</div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div>
+            <button onclick="clickUndo()">UNDO</button>
+        </div>
+        <div>
+            <button onclick="nextPlayer()">NEXT</button>
+        </div>
+    </footer>
     <script src="script.js"></script>
-    <script>
-        const socket = io('https://bro-darter.vercel.app/'); // Replace with your actual Vercel URL
+    
+    <div id="popup-gif" class="popup-gif">
+        <img src="yuge.gif" alt="Yuge Gif">
+    </div>
 
-        socket.on('message', (message) => {
-            console.log(message); // Should log "Hello from server"
-        });
-    </script>
+    <div id="popup-gif2" class="popup-gif2">
+        <img src="BROLIN.gif" alt="BROLIN Gif">
+    </div>
+
 </body>
 </html>
-

@@ -1,4 +1,4 @@
-const socket = io('https://bro-darter.vercel.app/');
+const socket = io('https://brodarter.vercel.app/');
 
 let currentPlayer = 1;
 let player1Score = 0;

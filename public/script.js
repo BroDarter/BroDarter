@@ -1,3 +1,5 @@
+const socket = io('https://bro-darter.vercel.app/');
+
 let currentPlayer = 1;
 let player1Score = 0;
 let player2Score = 0;
@@ -8,11 +10,19 @@ let turnActions = []; // To store the actions taken during the current turn
 let turnMarkCount = 0; // Count of marks in the current turn
 let totalMarks = { 1: [], 2: [] }; // To track total marks per turn for each player
 
-const socket = io('https://bro-darter.vercel.app/');
+let gameState = {
+    player1: { score: 0, marks: 0, name: 'Player 1' },
+    player2: { score: 0, marks: 0, name: 'Player 2' },
+    currentPlayer: 1,
+    marks: {
+        '20': [0, 0], '19': [0, 0], '18': [0, 0],
+        '17': [0, 0], '16': [0, 0], '15': [0, 0],
+        'Bull': [0, 0]
+    }
+};
 
 socket.on('updateGameState', (state) => {
-    // Update the game state with the data received from the server
-    Object.assign(gameState, state);
+    gameState = state;
     updateDisplay();
 });
 

@@ -1,17 +1,12 @@
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
 const path = require('path');
+const bodyParser = require('body-parser');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
-    }
-});
 
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
@@ -29,24 +24,13 @@ let gameState = {
     }
 };
 
-io.on('connection', (socket) => {
-    console.log('A user connected');
+app.get('/gameState', (req, res) => {
+    res.json(gameState);
+});
 
-    // Send the initial game state to the connected client
-    socket.emit('updateGameState', gameState);
-
-    // Handle incoming score updates
-    socket.on('updateScore', (data) => {
-        // Update the game state with the new score
-        gameState = { ...gameState, ...data };
-
-        // Broadcast the updated game state to all clients
-        io.emit('updateGameState', gameState);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('A user disconnected');
-    });
+app.post('/updateScore', (req, res) => {
+    gameState = { ...gameState, ...req.body };
+    res.json(gameState);
 });
 
 const PORT = process.env.PORT || 3000;

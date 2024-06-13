@@ -1,5 +1,3 @@
-const socket = io('https://brodarter.vercel.app/');
-
 let currentPlayer = 1;
 let player1Score = 0;
 let player2Score = 0;
@@ -21,15 +19,29 @@ let gameState = {
     }
 };
 
-socket.on('updateGameState', (state) => {
-    gameState = state;
-    updateDisplay();
-});
-
-function sendScoreUpdate(data) {
-    socket.emit('updateScore', data);
+function fetchGameState() {
+    fetch('/gameState')
+        .then(response => response.json())
+        .then(state => {
+            gameState = state;
+            updateDisplay();
+        });
 }
 
+function sendScoreUpdate(data) {
+    fetch('/updateScore', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(state => {
+        gameState = state;
+        updateDisplay();
+    });
+}
 // Set the player names in the HTML
 document.addEventListener('DOMContentLoaded', (event) => {
     const popupWidth = 400;
@@ -48,17 +60,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
             <button onclick="opener.setPlayerNames(document.getElementById('player1').value, document.getElementById('player2').value); window.close();" style="margin:10px; padding:10px; font-size:18px; background-color:#007bff; color:white; border:none; border-radius:8px;font-family: 'Permanent Marker', cursive;">Submit</button>
         </div>
     `);
+        // Start polling for game state updates every 2 seconds
+    setInterval(fetchGameState, 2000);
 });
 
 function setPlayerNames(player1, player2) {
-    player1Name = player1 || "Player 1";
-    player2Name = player2 || "Player 2";
-    document.getElementById('player1-name').textContent = player1Name;
-    document.getElementById('player2-name').textContent = player2Name;
-    document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
+    gameState.player1.name = player1 || "Player 1";
+    gameState.player2.name = player2 || "Player 2";
+    document.getElementById('player1-name').textContent = gameState.player1.name;
+    document.getElementById('player2-name').textContent = gameState.player2.name;
+    document.getElementById('currentPlayer').textContent = `${gameState.currentPlayer === 1 ? gameState.player1.name : gameState.player2.name}'s turn`;
     askWhoGoesFirst(); // Ensure to call askWhoGoesFirst after setting names
 }
-
 
    // askWhoGoesFirst();
 
@@ -118,28 +131,28 @@ function askHowManyDarts() {
 }
 
 function setFirstPlayer(player) {
-    currentPlayer = player;
-    document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
+    gameState.currentPlayer = player;
+    document.getElementById('currentPlayer').textContent = `${gameState.currentPlayer === 1 ? gameState.player1.name : gameState.player2.name}'s turn`;
 }
 
 function saveLatestState() {
     latestState = {
-        currentPlayer,
-        player1Score,
-        player2Score,
-        player1Marks,
-        player2Marks,
-        marks: JSON.parse(JSON.stringify(marks)) // Deep copy of marks
+        currentPlayer: gameState.currentPlayer,
+        player1Score: gameState.player1.score,
+        player2Score: gameState.player2.score,
+        player1Marks: gameState.player1.marks,
+        player2Marks: gameState.player2.marks,
+        marks: JSON.parse(JSON.stringify(gameState.marks)) // Deep copy of marks
     };
 }
 
 function restoreLatestState() {
     if (Object.keys(latestState).length > 0) { // Ensure there's a saved state
-        player1Score = latestState.player1Score;
-        player2Score = latestState.player2Score;
-        player1Marks = latestState.player1Marks;
-        player2Marks = latestState.player2Marks;
-        Object.assign(marks, latestState.marks);
+        gameState.player1.score = latestState.player1Score;
+        gameState.player2.score = latestState.player2Score;
+        gameState.player1.marks = latestState.player1Marks;
+        gameState.player2.marks = latestState.player2Marks;
+        Object.assign(gameState.marks, latestState.marks);
 
         updateDisplay();
         turnMarkCount = 0; // Reset the turn mark count
@@ -156,12 +169,12 @@ function addScore(number) {
     saveTurnAction(); // Save state before making changes
     turnMarkCount++; // Increment the count of marks in the current turn
     const points = scores[number];
-    const scoreElement = document.getElementById(`player${currentPlayer}-score`);
-    const playerMarksElement = document.getElementById(`player${currentPlayer}-${number}-marks`);
-    const opponentMarksElement = document.getElementById(`player${currentPlayer === 1 ? 2 : 1}-${number}-marks`);
+    const scoreElement = document.getElementById(`player${gameState.currentPlayer}-score`);
+    const playerMarksElement = document.getElementById(`player${gameState.currentPlayer}-${number}-marks`);
+    const opponentMarksElement = document.getElementById(`player${gameState.currentPlayer === 1 ? 2 : 1}-${number}-marks`);
 
-    let playerMarks = marks[number][currentPlayer - 1];
-    let opponentMarks = marks[number][currentPlayer === 1 ? 1 : 0];
+    let playerMarks = gameState.marks[number][gameState.currentPlayer - 1];
+    let opponentMarks = gameState.marks[number][gameState.currentPlayer === 1 ? 1 : 0];
 
     if (playerMarks >= 3 && opponentMarks >= 3) {
         // Both players have closed this number, do not increment marks
@@ -177,22 +190,22 @@ function addScore(number) {
         } else if (playerMarks === 3) {
             playerMarksElement.textContent = "[X]";
         }
-        marks[number][currentPlayer - 1] = playerMarks;
+        gameState.marks[number][gameState.currentPlayer - 1] = playerMarks;
     } else if (playerMarks >= 3 && opponentMarks < 3) {
-        if (currentPlayer === 1) {
-            player1Score += points;
-            scoreElement.textContent = player1Score;
+        if (gameState.currentPlayer === 1) {
+            gameState.player1.score += points;
+            scoreElement.textContent = gameState.player1.score;
         } else {
-            player2Score += points;
-            scoreElement.textContent = player2Score;
+            gameState.player2.score += points;
+            scoreElement.textContent = gameState.player2.score;
         }
     }
 
     if (playerMarks < 3 || (playerMarks === 3 && opponentMarks < 3)) {
-        if (currentPlayer === 1) {
-            player1Marks++;
+        if (gameState.currentPlayer === 1) {
+            gameState.player1.marks++;
         } else {
-            player2Marks++;
+            gameState.player2.marks++;
         }
     }
 
@@ -201,8 +214,8 @@ function addScore(number) {
 }
 
 function updateMarks() {
-    document.getElementById('player1-marks').textContent = player1Marks;
-    document.getElementById('player2-marks').textContent = player2Marks;
+    document.getElementById('player1-marks').textContent = gameState.player1.marks;
+    document.getElementById('player2-marks').textContent = gameState.player2.marks;
 }
 
 function updateMPR() {
@@ -226,45 +239,42 @@ function nextPlayer() {
         return;
     }
 
-    totalMarks[currentPlayer].push(turnMarkCount); // Save the marks for this turn
+    totalMarks[gameState.currentPlayer].push(turnMarkCount); // Save the marks for this turn
 
     if (checkWinCondition()) {
         askHowManyDarts();
         calculateStats(dartsThrown);
         return;
     }
-     // Check if the player scored 7 or 8 marks in this turn
-     if (turnMarkCount === 7 || turnMarkCount === 8) {
+
+    // Check if the player scored 7 or 8 marks in this turn
+    if (turnMarkCount === 7 || turnMarkCount === 8) {
         showPopupGif();
     }
 
-    if (turnMarkCount === 9 ) {
+    if (turnMarkCount === 9) {
         showPopupGif2();
     }
 
     saveLatestState(); // Save state at the beginning of the next player's turn
-    currentPlayer = currentPlayer === 1 ? 2 : 1;
+    gameState.currentPlayer = gameState.currentPlayer === 1 ? 2 : 1;
     turnMarkCount = 0; // Reset the turn mark count
     turnActions = []; // Clear actions for the new turn
-    document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
+    document.getElementById('currentPlayer').textContent = `${gameState.currentPlayer === 1 ? gameState.player1.name : gameState.player2.name}'s turn`;
 
-    updateMPR(); 
+    updateMPR();
     sendScoreUpdate(gameState);
-
 }
 
-
-
-
 function checkWinCondition() {
-    const playerClosedAll = (playerMarks) => Object.values(marks).every(([p1Marks, p2Marks], index) => {
-        return currentPlayer === 1 ? p1Marks >= 3 : p2Marks >= 3;
+    const playerClosedAll = (playerMarks) => Object.values(gameState.marks).every(([p1Marks, p2Marks], index) => {
+        return gameState.currentPlayer === 1 ? p1Marks >= 3 : p2Marks >= 3;
     });
 
-    if (playerClosedAll(marks[currentPlayer - 1])) {
-        if (currentPlayer === 1 && player1Score >= player2Score) {
+    if (playerClosedAll(gameState.marks[gameState.currentPlayer - 1])) {
+        if (gameState.currentPlayer === 1 && gameState.player1.score >= gameState.player2.score) {
             return true;
-        } else if (currentPlayer === 2 && player2Score >= player1Score) {
+        } else if (gameState.currentPlayer === 2 && gameState.player2.score >= gameState.player1.score) {
             return true;
         }
     }
@@ -272,28 +282,23 @@ function checkWinCondition() {
 }
 
 function resetGame() {
-
-    mprPlayer1 = 0.00
-    mprPlayer2 = 0.00
-
     askWhoGoesFirst();
-    currentPlayer = 1;
-    player1Score = 0;
-    player2Score = 0;
-    player1Marks = 0;
-    player2Marks = 0;
+    gameState.currentPlayer = 1;
+    gameState.player1.score = 0;
+    gameState.player2.score = 0;
+    gameState.player1.marks = 0;
+    gameState.player2.marks = 0;
     latestState = {};
     turnActions = [];
     turnMarkCount = 0; // Reset the turn mark count
     totalMarks = { 1: [], 2: [] }; // Reset total marks
 
- 
-    for (const number in marks) {
-        marks[number][0] = 0;
-        marks[number][1] = 0;
+    for (const number in gameState.marks) {
+        gameState.marks[number][0] = 0;
+        gameState.marks[number][1] = 0;
     }
 
-    updateMPR(); 
+    updateMPR();
     updateDisplay();
     saveLatestState();
 }
@@ -307,40 +312,41 @@ function clickUndo() {
         restoreLatestState(); // Restore to the state before the turn started
     }
     // Ensure display is updated correctly without changing the player
-    document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
+    document.getElementById('currentPlayer').textContent = `${gameState.currentPlayer === 1 ? gameState.player1.name : gameState.player2.name}'s turn`;
 }
 
 function saveTurnAction() {
     const state = {
-        player1Score,
-        player2Score,
-        player1Marks,
-        player2Marks,
-        marks: JSON.parse(JSON.stringify(marks)) // Deep copy of marks
+        player1Score: gameState.player1.score,
+        player2Score: gameState.player2.score,
+        player1Marks: gameState.player1.marks,
+        player2Marks: gameState.player2.marks,
+        marks: JSON.parse(JSON.stringify(gameState.marks)) // Deep copy of marks
     };
     turnActions.push(state);
 }
 
 function restoreTurnAction(state) {
-    player1Score = state.player1Score;
-    player2Score = state.player2Score;
-    player1Marks = state.player1Marks;
-    player2Marks = state.player2Marks;
-    Object.assign(marks, state.marks);
+    gameState.player1.score = state.player1Score;
+    gameState.player2.score = state.player2Score;
+    gameState.player1.marks = state.player1Marks;
+    gameState.player2.marks = state.player2Marks;
+    Object.assign(gameState.marks, state.marks);
 
     updateDisplay();
 }
 
-function updateDisplay() {
-    document.getElementById('player1-score').textContent = player1Score;
-    document.getElementById('player2-score').textContent = player2Score;
-    document.getElementById('currentPlayer').textContent = `${currentPlayer === 1 ? player1Name : player2Name}'s turn`;
 
-    for (const number in marks) {
+function updateDisplay() {
+    document.getElementById('player1-score').textContent = gameState.player1.score;
+    document.getElementById('player2-score').textContent = gameState.player2.score;
+    document.getElementById('currentPlayer').textContent = `${gameState.currentPlayer === 1 ? gameState.player1.name : gameState.player2.name}'s turn`;
+
+    for (const number in gameState.marks) {
         const player1MarksElement = document.getElementById(`player1-${number}-marks`);
         const player2MarksElement = document.getElementById(`player2-${number}-marks`);
-        const player1MarkCount = marks[number][0];
-        const player2MarkCount = marks[number][1];
+        const player1MarkCount = gameState.marks[number][0];
+        const player2MarkCount = gameState.marks[number][1];
 
         player1MarksElement.textContent = getMarkSymbol(player1MarkCount);
         player2MarksElement.textContent = getMarkSymbol(player2MarkCount);
@@ -365,13 +371,12 @@ function clearStats() {
     alert("Game stats cleared. You can start a new game.");
 }
 
-// Function to calculate and display stats
 function calculateStats(dartsThrown) {
     const totalMarksPlayer1 = totalMarks[1].reduce((sum, marks) => sum + marks, 0);
     const totalMarksPlayer2 = totalMarks[2].reduce((sum, marks) => sum + marks, 0);
 
-    const dartsThrownPlayer1 = totalMarks[1].length * 3 + (currentPlayer === 1 ? parseInt(dartsThrown) - 3 : 0);
-    const dartsThrownPlayer2 = totalMarks[2].length * 3 + (currentPlayer === 2 ? parseInt(dartsThrown) - 3 : 0);
+    const dartsThrownPlayer1 = totalMarks[1].length * 3 + (gameState.currentPlayer === 1 ? parseInt(dartsThrown) - 3 : 0);
+    const dartsThrownPlayer2 = totalMarks[2].length * 3 + (gameState.currentPlayer === 2 ? parseInt(dartsThrown) - 3 : 0);
 
     const mprPlayer1 = ((totalMarksPlayer1 / dartsThrownPlayer1) * 3).toFixed(2);
     const mprPlayer2 = ((totalMarksPlayer2 / dartsThrownPlayer2) * 3).toFixed(2);
@@ -408,9 +413,9 @@ function calculateStats(dartsThrown) {
             <th style="width:10.5%;font-weight:normal;">Thrown</th>
         </tr>
         <tr>
-            <td style="width:10.5%; text-align:center;">${player1Name}</td>
-            ${Object.keys(scores).map(number => `<td style="width:6%; text-align:center;">${getMarkSymbol(marks[number][0])}</td>`).join('')}
-            <td style="width:8.33%; text-align:center;">${player1Score}</td>
+            <td style="width:10.5%; text-align:center;">${gameState.player1.name}</td>
+            ${Object.keys(scores).map(number => `<td style="width:6%; text-align:center;">${getMarkSymbol(gameState.marks[number][0])}</td>`).join('')}
+            <td style="width:8.33%; text-align:center;">${gameState.player1.score}</td>
             <td style="width:8.33%; text-align:center;">${mprPlayer1}</td>
             <td style="width:8.33%; text-align:center;">${bestRoundPlayer1}</td>
             <td style="width:10.5%; text-align:center;">${comebackPlayer1}</td>
@@ -418,9 +423,9 @@ function calculateStats(dartsThrown) {
             <td style="width:10.5%; text-align:center;">${dartsThrownPlayer1}</td>
         </tr>
         <tr>
-            <td style="width:10.5%; text-align:center;">${player2Name}</td>
-            ${Object.keys(scores).map(number => `<td style="width:6%; text-align:center;">${getMarkSymbol(marks[number][1])}</td>`).join('')}
-            <td style="width:8.33%; text-align:center;">${player2Score}</td>
+            <td style="width:10.5%; text-align:center;">${gameState.player2.name}</td>
+            ${Object.keys(scores).map(number => `<td style="width:6%; text-align:center;">${getMarkSymbol(gameState.marks[number][1])}</td>`).join('')}
+            <td style="width:8.33%; text-align:center;">${gameState.player2.score}</td>
             <td style="width:8.33%; text-align:center;">${mprPlayer2}</td>
             <td style="width:8.33%; text-align:center;">${bestRoundPlayer2}</td>
             <td style="width:10.5%; text-align:center;">${comebackPlayer2}</td>
@@ -430,12 +435,10 @@ function calculateStats(dartsThrown) {
     </table>
 `;
 
-    // Store the current game stats in localStorage
     let gameStats = JSON.parse(localStorage.getItem('gameStats')) || [];
     gameStats.push(currentGameStats);
     localStorage.setItem('gameStats', JSON.stringify(gameStats));
 
-    // Combine all game stats for display
     let allGameStats = gameStats.join('<br><br>');
 
     setTimeout(() => {
@@ -447,7 +450,7 @@ function calculateStats(dartsThrown) {
         let statsPopup = window.open("", "Stats", `width=${popupWidth},height=${popupHeight},top=${top},left=${left}`);
         statsPopup.document.write(allGameStats);
         statsPopup.document.close();
-    }, 100); // Delay the opening of stats by 100ms
+    }, 100);
 
     resetGame();
 }
@@ -481,7 +484,7 @@ function showPopupGif() {
 
     setTimeout(() => {
         popup.style.display = 'none';
-    }, 1000); // Display the gif for 1 second
+    }, 1000);
 }
 
 function showPopupGif2() {
@@ -490,6 +493,5 @@ function showPopupGif2() {
 
     setTimeout(() => {
         popup.style.display = 'none';
-    }, 5900); // Display the gif for 5 second
+    }, 5000);
 }
-

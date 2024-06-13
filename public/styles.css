@@ -27,7 +27,7 @@ h2 {
 
 .vertical-column1 {
     position: absolute;
-    top: calc(50px + 10px); /* Adjust this value to match the height of your header */
+    top: calc(50px + 10px); /* Adjust this value to match the height of your header xx*/
     left: 28%;
     display: flex;
     flex-direction: column;
